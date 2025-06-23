@@ -47,11 +47,11 @@ export const signup = async (req, res) => {
       await upsertStreamUser({
         id: newUser._id.toString(),
         name: newUser.fullName,
-        image: newUser.profilePic || ""
-      })
-      console.log(`Stream user created for ${newUser.fullName}`)
+        image: newUser.profilePic || "",
+      });
+      console.log(`Stream user created for ${newUser.fullName}`);
     } catch (error) {
-      console.error("Error creating Stream user", error)
+      console.error("Error creating Stream user", error);
     }
 
     const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, {
@@ -105,30 +105,80 @@ export const login = async (req, res) => {
     });
 
     res.cookie("jwt", token, {
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-        sameSite: "strict",
-        secure: process.env.NODE_ENV === "production"
-    })
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+    });
 
     res.status(200).json({
-        message: "Login successful",
-        user
-    })
+      message: "Login successful",
+      user,
+    });
   } catch (error) {
-    console.error("Error in login", error)
-    res.status(500).json({message: "Internal server error"})
+    console.error("Error in login", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
 export const logout = async (req, res) => {
-    try {
-        res.clearCookie("jwt")
-        res.status(200).json({message: "Logout successfui"})
-    } catch (error) {
-        console.error("Error in logout", error)
-        res.status(500).json({message: "Internal server error"})
-    }
+  try {
+    res.clearCookie("jwt");
+    res.status(200).json({ message: "Logout successfui" });
+  } catch (error) {
+    console.error("Error in logout", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
-export const onboard = async (req, res) => {}
+export const onboard = async (req, res) => {
+  try {
+    const userId = req.user._id
+
+    const {fullName, bio, location, nativeLanguage, learningLanguage} = req.body
+
+    if(!fullName || !bio || !location || !nativeLanguage || !learningLanguage){
+      return res.status(400).json({
+        message: "All fields are required",
+        missingFields: [
+          !fullName && "fullName",
+          !bio && "bio",
+          !location && "location",
+          !nativeLanguage && "nativeLanguage",
+          !learningLanguage && "learningLanguage"
+        ].filter(Boolean)
+      })
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(userId, {
+      ...req.body,
+      isOnboarded: true
+    }, {new: true})
+
+    if(!updatedUser){
+      return res.status(400).json({
+        message: "User not found"
+      })
+    }
+
+    try {
+      await upsertStreamUser({
+        id: updatedUser._id.toString(),
+        name: updatedUser.fullName,
+        image: updatedUser.profilePic || ""
+      })
+      console.log(`Stream user updated after onboarding for ${updatedUser.fullName}`)
+    } catch (error) {
+      console.error("Error updating Stream user after onboarding", error)
+    }
+
+    res.status(200).json({message: "Onboarding successful", user: updatedUser})
+  } catch (error) {
+    console.error("Error in onboarding", error)
+    res.status(500).json({message: "Internal server error"})
+  }
+};
+
+export const me = async(req, res) => {
+  res.status(200).json({message: "User fetched successfully", user: req.user})
+}

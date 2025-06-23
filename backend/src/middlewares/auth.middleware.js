@@ -1,7 +1,5 @@
 import jwt from "jsonwebtoken"
 import User from "../models/User.js"
-import { messageSetPagination } from "stream-chat/dist/types/utils.js"
-
 export const authMiddleware = async (req, res, next) => {
     try {
         const token = req.cookies.jwt
@@ -20,7 +18,7 @@ export const authMiddleware = async (req, res, next) => {
             })
         }
 
-        const user = await User.findById(decoded.userId).select("-passwword")
+        const user = await User.findById(decoded.userId).select("-password")
 
         if(!user){
             res.status(401).json({
