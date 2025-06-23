@@ -1,4 +1,3 @@
-import bcrypt from "bcryptjs";
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 import { upsertStreamUser } from "../libs/stream.js";
@@ -132,3 +131,4 @@ export const logout = async (req, res) => {
     }
 };
 
+export const onboard = async (req, res) => {}
