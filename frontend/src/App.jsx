@@ -1,35 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Routes, Route } from "react-router";
 
-function App() {
-  const [count, setCount] = useState(0)
+import HomePage from "./pages/HomePage";
+import SignUpPage from "./pages/SignUpPage";
+import LoginPage  from "./pages/LoginPage";
+import OnboardingPage from "./pages/OnboardingPage";
+import CallPage from "./pages/CallPage";
+import ChatPage from "./pages/ChatPage";
+import NotificationsPage from "./pages/NotificationsPage";
 
+import { Toaster } from "react-hot-toast";
+import { useQuery } from "@tanstack/react-query";
+import { axiosInstance } from "./libs/axios.js";
+
+const App = () => {
+  const {data, isLoading, error} = useQuery({
+    queryKey: [],
+
+    queryFn: async () => {
+      const res = await axiosInstance.get("/auth/me");
+      return res.data;
+    }
+  })
+
+  console.log(data);
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div className="h-screen" data-theme="coffee">
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/onboarding" element={<OnboardingPage />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
+        <Route path="/call" element={<CallPage />} />
+        <Route path="/chat" element={<ChatPage />} />
+      </Routes>
 
-export default App
+      <Toaster />
+    </div>
+  );
+};
+
+export default App;
