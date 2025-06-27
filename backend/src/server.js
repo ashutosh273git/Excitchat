@@ -4,6 +4,7 @@ import authRoutes from "./routes/auth.route.js";
 import { connectDB } from "./libs/db.js";
 import cookieParser from "cookie-parser"
 import userRoutes from "./routes/user.route.js";
+import chatRoutes from "./routes/chat.route.js";
 
 dotenv.config()
 
@@ -15,6 +16,7 @@ app.use(cookieParser())
 
 app.use("/api/v1/auth", authRoutes)
 app.use("/api/v1/users", userRoutes)
+app.use("api/v1/chat", chatRoutes)
 
 connectDB().then(() => {
     app.listen(PORT, () => {
