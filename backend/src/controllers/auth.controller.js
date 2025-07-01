@@ -123,7 +123,11 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
   try {
-    res.clearCookie("jwt");
+    res.clearCookie("jwt", {
+      httpOnly: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production"
+    });
     res.status(200).json({ message: "Logout successfui" });
   } catch (error) {
     console.error("Error in logout", error);
