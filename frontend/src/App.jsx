@@ -13,11 +13,11 @@ import PageLoader from "./components/PageLoader.jsx";
 import useAuthUser from "./hooks/useAuthUser.js";
 
 const App = () => {
-  const { isLoading, authUser } = useAuthUser();  
+  const { isLoading, authUser } = useAuthUser();
   const isAuthenticated = Boolean(authUser);
   const isOnboarded = authUser?.isOnboarded;
-  
-  if(isLoading) return <PageLoader />
+
+  if (isLoading) return <PageLoader />;
 
   return (
     <div className="h-screen" data-theme="coffee">
@@ -34,11 +34,23 @@ const App = () => {
         />
         <Route
           path="/signup"
-          element={!isAuthenticated ? <SignUpPage /> : <Navigate to="/" />}
+          element={
+            !isAuthenticated ? (
+              <SignUpPage />
+            ) : (
+              <Navigate to={!isOnboarded ? "/onboarding" : "/"} />
+            )
+          }
         />
         <Route
           path="/login"
-          element={!isAuthenticated ? <LoginPage /> : <Navigate to="/" />}
+          element={
+            !isAuthenticated ? (
+              <LoginPage />
+            ) : (
+              <Navigate to={!isOnboarded ? "/onboarding" : "/"} />
+            )
+          }
         />
         <Route
           path="/onboarding"
