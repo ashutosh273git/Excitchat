@@ -64,7 +64,7 @@ export const sendFriendRequest = async (req, res) => {
     }
 
     // prevent sending request if already sent
-    const existingRequest = await FriendRequest.findById({
+    const existingRequest = await FriendRequest.findOne({
       $or: [
         {sender: myId, recipient: recipientId},
         {sender: recipientId, recipient: myId}
@@ -78,7 +78,7 @@ export const sendFriendRequest = async (req, res) => {
     }
 
     // create new friend request
-    const friendRequest = await friendRequest.create({
+    const friendRequest = await FriendRequest.create({
       sender: myId,
       recipient: recipientId,
     })

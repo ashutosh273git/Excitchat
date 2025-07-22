@@ -43,12 +43,13 @@ const OnboardingPage = () => {
   };
 
   const handleRandomAvatar = () => {
-    const idx = Math.floor(Math.random() * 100) + 1; // 1-100 included
-    const randomAvatar = `https://avatar.iran.liara.run/public/${idx}.png`;
-
+    const seed = Math.floor(Math.random() * 10000);
+    const randomAvatar = `https://api.dicebear.com/7.x/bottts/svg?seed=${seed}`;
+  
     setFormState({ ...formState, profilePic: randomAvatar });
     toast.success("Random profile picture generated!");
   };
+  
 
   return (
     <div className="min-h-screen bg-base-100 flex items-center justify-center px-4 py-6">
